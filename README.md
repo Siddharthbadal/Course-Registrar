@@ -2,19 +2,25 @@
 
 (project is still in Progress)
 
-**Command line interface for course registrar**. Project allows user to perform various operation using allowed commands.
+**Command line interface for course registrar**. Project allows user to perform various operation using command line
+commands.
 Course Registrar CLI is built with Python and mysql and also have used typer and rich libraries. 
 Typer is a library for building CLI applications while rich is used to create highlighted and colored text and tables 
 on the command line.
 
+Libraries used:
+    - Typer
+    - Rich
+    - MySQL Connector
+    
 
 Files details in the Project: 
     
     registrar.py: A file for commands. registrar.py has all the function used to create and perform certain commands. 
-                These commands are work on different database functions to perform SQL queries.
+                These commands work on different database functions to perform SQL queries.
     
-    database.py: perform the database operation including creating connecting and initializing inbuilt dataset for 
-                the registrar.
+    database.py: perform the database operation including creating connection with mysql server
+                and initializing inbuilt dataset for the registrar and creating all tables and triggers. 
     
     ddl.sql: data definition query to create tables inside the database. In mySQL Temp tables are used and Triggers 
             are created to meet certain criteria to enroll in the courses.
@@ -41,26 +47,30 @@ add a course:
 
 
 ## All Commands:
-    
- add-courses  :   Add a course by giving code, course name, and department  
+| Command      | Details                                                  |
+|--------------|----------------------------------------------------------|
 
- add-prereq    :  Add course prerequisites by giving course name, prereq course name and minimum grade       
-                 (optional)                          
+| `add-courses`  | Add a course by giving code, course name, and department |  
 
- add-student   :  Add a student by giving firstname, lastname, and uniq_id      
+ | `add-prereq`   |  Add course prerequisites by giving course name, prereq course name and minimum grade       
+                 (optional)    |                      
 
- enroll-student : enroll student by entering student id, course code and year   
+ | `add-student`  |  Add a student by giving firstname, lastname, and uniq_id |      
 
- reset-database : Reset the database. and initialize the inbuilt dataset. By default, reset database is 
-                 performed with inbuilt data. can also use:     --with-data & --no-with-data    
+ | `enroll-student` | enroll student by entering student id, course code and year |   
 
- set-grade    :   set grade in student_course table by entering student, course, grade.     
+ | `reset-database` | Reset the database. and initialize the inbuilt dataset. By default, reset database is 
+                 performed with inbuilt data. can also use:     --with-data & --no-with-data    |
 
- show-courses  :  Show courses by department. Eg:"Computer Science"                      
+ | `set-grade`    |   set grade in student_course table by entering student, course, grade.     |
 
- show-prereqs  :  See the prerequisites of a course by entering course code(moniker) eg: cs101  
+ | `show-courses`  |  Show courses by department. Eg:"Computer Science" |                      
 
- show-students :  Show student name by last name letters. eg: neg.                                           
+ | `show-prereqs` |  See the prerequisites of a course by entering course code(moniker) eg: cs101 |
+
+ | `show-students` |  Show student name by last name letters. eg: neg.  | 
+ | `unenroll_student` | Un-enroll a student from a course by entering student id and course code   │
+                          
 
 
 

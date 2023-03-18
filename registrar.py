@@ -1,10 +1,12 @@
 import typer
+import time
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
+from os import environ as env
 from datetime import datetime
 from database import reset, add_a_student, add_a_course, add_a_prerequisites, initalize_data,\
-    show_course_prerequisites, show_students_by, show_courses_by, enroll, set_student_grade
+    show_course_prerequisites, show_students_by, show_courses_by, enroll, set_student_grade, unenroll
 
 
 app = typer.Typer()
@@ -116,6 +118,18 @@ def enroll_student(student: str, course: str, year: int = datetime.now().year):
     enroll(student, course, year)
     print_message(message=f"\n{student} enrolled in course {course}!!!")
 
+@app.command()
+def unenroll_student(student: str, course: str, year: int = datetime.now().year):
+    """
+    Un-enroll a student from a course by entering student id and course code
+
+    :param student:
+    :param course:
+    :param year:
+    :return:
+    """
+    unenroll(student, course, year)
+    print_message(message=f"\n{student} un-enrolled from course {course}!!!")
 
 @app.command()
 def set_grade(student: str, course: str, grade: int, year:int = datetime.now().year):
@@ -137,7 +151,7 @@ def set_grade(student: str, course: str, grade: int, year:int = datetime.now().y
 
 
 @app.command()
-def reset_database(with_data: bool = True):
+def reset_database(verbose: bool=False, with_data: bool = True):
     """
     Reset the database. and initialize the inbuilt dataset.
     By default, reset database is performed with inbuilt data. can also use:
@@ -147,13 +161,18 @@ def reset_database(with_data: bool = True):
     """
     answer = input("This will create a new database. Do you want to continue? (y/n): ")
 
+    if verbose:
+        env['MYSQL_VERBOSE'] = "YES"
+
     if answer.strip().lower() == 'y':
         reset()
+        time.sleep(2)
         typer.echo("\nDatabase reset done successfully!")
 
         if with_data:
+            time.sleep(2)
             initalize_data()
-            typer.echo("Data initialize successfully!")
+            typer.echo("All tables created. Data initialize successfully!")
 
     else:
         typer.echo("\nDatabase reset aborted.")

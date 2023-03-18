@@ -1,3 +1,6 @@
+import mysql.connector
+import time
+import typer
 from mysql.connector import connect, Error
 from dotenv import load_dotenv
 from os import environ as env
@@ -19,6 +22,9 @@ def get_connection():
             port=env.get('port'),
             database=env.get('database'),
         )
+        if env.get("MYSQL_VERBOSE") == "YES":
+            print("Connected to Mysql...!\n")
+            time.sleep(2)
 
     except Error as e:
         print(f"Error '{e}' occured while attempting to connect to the database")
@@ -34,16 +40,26 @@ def query_connection(connection, q, data=None, fetch=None, many=False):
     :return:
     """
     cursor = connection.cursor()
-    if many:
-        cursor.executemany(q, data)
-    else:
-        cursor.execute(q, data)
-    if fetch:
-        return cursor.fetchall()
-    else:
-        connection.commit()
+    try:
+        if many:
+            cursor.executemany(q, data)
 
-    cursor.close()
+        else:
+            cursor.execute(q, data)
+        if fetch:
+            return cursor.fetchall()
+        else:
+            connection.commit()
+            if env.get("MYSQL_VERBOSE") == "YES":
+
+                print(q)
+                typer.echo(typer.style("Successful!\n", bg=typer.colors.YELLOW))
+                time.sleep(1)
+        #
+    except (mysql.connector.IntegrityError, mysql.connector.DatabaseError) as e:
+        typer.echo(f"\nStatement execution failed\n: {typer.style(e, bg=typer.colors.WHITE, fg=typer.colors.RED)}")
+    finally:
+        cursor.close()
 
 
 # database reset
@@ -52,7 +68,8 @@ def reset():
         with connection.cursor() as cursor:
             with open('ddl.sql', 'r') as f:
                 for result in cursor.execute(f.read(), multi=True):
-                    pass
+                    if env.get('MYSQL_VERBOSE') =='YES':
+                        pass
 
 
 def initalize_data():
@@ -161,6 +178,13 @@ def enroll(student, course, year):
         query = "INSERT INTO student_course (student, course, year) VALUES (%s, %s, %s);"
         data = (student, course, year)
         query_connection(conn, query, data=data)
+
+
+def unenroll(student, course, year):
+    with get_connection() as conn:
+        query = "DELETE FROM student_course WHERE student = %s AND course = %s AND year =%s;"
+        data = (student, course, year)
+        query_connection(conn, query, data)
 
 
 def set_student_grade(student, course, grade, year):
