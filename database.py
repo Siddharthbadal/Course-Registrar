@@ -55,7 +55,7 @@ def query_connection(connection, q, data=None, fetch=None, many=False):
                 print(q)
                 typer.echo(typer.style("Successful!\n", bg=typer.colors.YELLOW))
                 time.sleep(1)
-        #
+
     except (mysql.connector.IntegrityError, mysql.connector.DatabaseError) as e:
         typer.echo(f"\nStatement execution failed\n: {typer.style(e, bg=typer.colors.WHITE, fg=typer.colors.RED)}")
     finally:
@@ -88,6 +88,10 @@ def initalize_data():
         prereq_query = "INSERT INTO prerequisites (course, prereq, min_grade) VALUES(%s, %s, %s);"
         prereq_data = data.prerequisites
         query_connection(conn, prereq_query, prereq_data, many = True)
+
+        grade_query = "INSERT INTO letter_grade (grade, letter) VALUES(%s, %s);"
+        grade_data = data.letter_grades
+        query_connection(conn, grade_query, grade_data, many=True)
 
 
 
@@ -192,6 +196,76 @@ def set_student_grade(student, course, grade, year):
         query = "UPDATE student_course SET grade =%s WHERE student = %s AND course = %s AND year =%s"
         data = (grade, student, course, year)
         query_connection(conn, query, data=data)
+
+
+
+
+def show_courses_a_student_enrolled_in(student):
+    with get_connection() as conn:
+        query = "SELECT course, year FROM student_course WHERE student = %s AND grade IS NULL"
+        data = (student,)
+        return query_connection(conn, query, data=data, fetch=True)
+
+
+
+
+
+def get_transcript_for(student):
+
+    with get_connection() as conn:
+        query = """
+                    SELECT course, year, grade, 
+                    ( SELECT letter 
+                    FROM letter_grade as lg
+                    where lg.grade <= sc.grade
+                    order by lg.grade desc limit 1
+                    ) as letter
+                     FROM student_course as sc 
+                     WHERE student = %s AND grade IS NOT NULL ORDER BY year;
+                """
+        data = (student,)
+
+        return query_connection(conn, query, data=data, fetch=True)
+
+
+
+def most_enrolled_students_courses(n):
+    with get_connection() as conn:
+        query = """
+            SELECT course, name, count(*) as enrolled_students
+            FROM student_course AS sc 
+            JOIN courses c on sc.course = c.moniker  
+            GROUP BY course
+            ORDER BY enrolled_students DESC
+            LIMIT %s 
+        """
+        data = (n,)
+        return query_connection(conn, query, data=data, fetch=True)
+
+
+def top_performing_students(n):
+    with get_connection() as conn:
+        query = """
+            SELECT student, s.first_name, s.last_name, 
+            count(*) as courses_taken, 
+            avg(grade) as average_grade      
+            FROM student_course sc
+                JOIN students s on
+                sc.student = s.uniq_id
+            WHERE grade IS NOT NULL
+            GROUP BY student
+            ORDER BY average_grade DESC 
+            LIMIT %s
+                
+        """
+        data = (n,)
+        return query_connection(conn, query, data=data, fetch=True)
+
+
+
+
+
+
 
 
 

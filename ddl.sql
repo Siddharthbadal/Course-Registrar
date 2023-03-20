@@ -88,6 +88,26 @@ BEGIN
 end;
 
 
+CREATE TABLE IF NOT EXISTS letter_grade
+(
+    grade INTEGER NOT NULL,
+    letter VARCHAR(10) NOT NULL,
+    check (grade >=0 and grade <= 100)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

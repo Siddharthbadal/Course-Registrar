@@ -3,10 +3,12 @@ import time
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
+from rich.panel import Panel
 from os import environ as env
 from datetime import datetime
 from database import reset, add_a_student, add_a_course, add_a_prerequisites, initalize_data,\
-    show_course_prerequisites, show_students_by, show_courses_by, enroll, set_student_grade, unenroll
+    show_course_prerequisites, show_students_by, show_courses_by, enroll, set_student_grade, unenroll,\
+    show_courses_a_student_enrolled_in, get_transcript_for, most_enrolled_students_courses, top_performing_students
 
 
 app = typer.Typer()
@@ -17,7 +19,7 @@ def pretty_table(with_headers, data, in_color):
     table = Table(*with_headers, show_header=True, header_style=f"bold {in_color}")
     for row in data:
         table.add_row(*map(str, row))
-    console.print(table)
+    console.print(table, justify="center")
 
 
 def print_message(message: str):
@@ -70,7 +72,7 @@ def show_prereqs(course: str):
     See the prerequisites of a course by entering course code(moniker) eg: cs101
 
     :param course:
-    :return:
+
     """
     pretty_table(["Course","Prerequisites","Minimum Grade"],data=show_course_prerequisites(course), in_color="red")
 
@@ -80,7 +82,7 @@ def show_students(last_name: str):
     Show student name by last name letters. eg: neg.
 
     :param last_name:
-    :return:
+
     """
 
     data = show_students_by(last_name)
@@ -96,7 +98,7 @@ def show_courses(department: str):
     Show courses by department. Eg:"Computer Science"
 
     :param department:
-    :return:
+
     """
     data = show_courses_by(department)
     if len(data):
@@ -113,10 +115,16 @@ def enroll_student(student: str, course: str, year: int = datetime.now().year):
     :param student:
     :param course:
     :param year:
-    :return:
+
     """
+
     enroll(student, course, year)
-    print_message(message=f"\n{student} enrolled in course {course}!!!")
+    console.print(f"\n{student} current courses:")
+    student_current_courses(student)
+    # print_message(message=f"\n{student} enrolled in course {course}!!!")
+
+
+
 
 @app.command()
 def unenroll_student(student: str, course: str, year: int = datetime.now().year):
@@ -126,10 +134,12 @@ def unenroll_student(student: str, course: str, year: int = datetime.now().year)
     :param student:
     :param course:
     :param year:
-    :return:
+
     """
     unenroll(student, course, year)
-    print_message(message=f"\n{student} un-enrolled from course {course}!!!")
+    console.print(f"\n{student} un-enrolled from course {course}!", style='bold red')
+    console.print(f"\n{student} current courses:", justify='center')
+    student_current_courses(student)
 
 @app.command()
 def set_grade(student: str, course: str, grade: int, year:int = datetime.now().year):
@@ -142,11 +152,60 @@ def set_grade(student: str, course: str, grade: int, year:int = datetime.now().y
     :param year: default
     """
     set_student_grade(student, course, grade, year)
-    print_message(message="\nGrade Updated!")
+    console.print(f"\nGrade Updated for{course}!", style="bold yellow")
 
 
 
+@app.command()
+def student_current_courses(student: str):
+    """
+    Show the all courses a student is enrolled in by giving student id
 
+    :param student:
+
+    """
+    data = show_courses_a_student_enrolled_in(student)
+    if len(data):
+        pretty_table(['Course', 'Year'], data=data, in_color="blue")
+    else:
+        console.print(f"\nNo courses for {student}. Please enroll!", style="bold blue")
+
+
+@app.command()
+def student_transcript(student: str):
+    """
+    get details of a student completed course by giving student name
+    """
+    data = get_transcript_for(student)
+    if len(data):
+        print_message(message=f"\n{student} completed courses!")
+        pretty_table(['Course', 'Year', 'Grade', "Grade Level"], data=data, in_color="green")
+        console.print(f"Average GPA: {sum([row[2] for row in data]) / len(data):.2f}", style="bold", justify='center')
+    else:
+        console.print(f"\n{student} yet to complete a course!")
+
+
+
+@app.command()
+def most_enrolled_courses(n: int = 10):
+    """
+    get the most enrolled courses by giving a number (optional) / --n=1
+    :param n:  --n=1 (optional)
+
+    """
+    data = most_enrolled_students_courses(n)
+    pretty_table(["Course", "Name", "Enrollemnt"], data=data, in_color="green")
+
+
+@app.command()
+def top_performers(n: int=5):
+    """
+    Find the top performers
+    :param n: total number of students (optional)
+
+    """
+    data = top_performing_students(n)
+    pretty_table(['UniqID', 'First_name', 'Last_name', 'Courses', 'GPA'], data=data, in_color="yellow")
 
 
 
