@@ -21,15 +21,10 @@ Other Libraries used:
 Few Operations to be performed:
 
     - Add a student
-    
     - Add a course and course prerequisite
-    
     - Enroll and Un-enroll students
-    
     - Set grades to mark completed
-    
     - View top students and courses
-    
     - Get a student transcript 
 
     
