@@ -16,7 +16,7 @@ courses =[
     ('art09', 'Bachelor of Arts', 'Arts'),
     ('art10', ' Masters in Art', 'Arts'),
     ('cs01', "Programming for All", "Computer Science"),
-    ('mh01', "Math for All", "Mathematics")
+    ('mh101', "Math for All", "Mathematics")
 
 ]
 
