@@ -52,7 +52,7 @@ def add_courses(moniker: str, name: str, department: str):
 
 
 @app.command()
-def add_prereq(course: str, prereq: str, min_grade: int = min_passing_grade):
+def add_prereq(course: str, prereq: str, min_grade: int = typer.Argument(min_passing_grade)):
     """
     Add course prerequisites by giving course name, prereq course name and minimum grade (optional)
 
@@ -108,7 +108,7 @@ def show_courses(department: str):
 
 
 @app.command()
-def enroll_student(student: str, course: str, year: int = datetime.now().year):
+def enroll_student(student: str, course: str, year: int = typer.Argument(datetime.now().year)):
     """
     enroll student by entering student id, course code and year
 
