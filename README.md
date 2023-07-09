@@ -11,7 +11,6 @@ typer and rich libraries.
 Typer is a library for building CLI applications while rich is used to create highlighted and colored text and tables 
 on the command line.
 
-
 Other Libraries used:
     - Typer
     - Rich
