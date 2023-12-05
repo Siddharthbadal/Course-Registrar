@@ -5,26 +5,21 @@
 their students and courses data. Users can perform operations like create, read, update, and delete on data.
 users start with setting up a database either by  initializing the inbuilt dataset or can add his/her data.
 
-
+### Tools
 Course Registrar Command line interface is built with **Python and mysql** and also have used 
 typer and rich libraries. 
 Typer is a library for building CLI applications while rich is used to create highlighted and colored text and tables 
 on the command line.
-
-Other Libraries used:
-    - Typer
-    - Rich
-    - MySQL Connector
+   
     
-    
-Few Operations to be performed:
+### Few Operations to be performed:
 
-    - Add a student
-    - Add a course and course prerequisite
-    - Enroll and Un-enroll students
-    - Set grades to mark completed
-    - View top students and courses
-    - Get a student transcript 
+- Add a student
+- Add a course and course prerequisite
+- Enroll and Un-enroll students
+- Set grades to mark completed
+- View top students and courses
+- Get a student transcript 
 
     
     
@@ -45,22 +40,22 @@ Files details in the Project:
 
 ### Commands
 To see all commnads:
-```
+```python
     python registrar.py --help
 ```
 
 reset-database command:
-```
+```python
     python registrar.py reset-database --verbose --with-data / --no-with-data
 ```
 
 add a course:
-```
+```python
         python registrar.py add-courses py50 "Introduction to Python" "Computer Science"
 ```
 
 
-## All Commands:
+### All Commands:
 | Command      | Details                                                  |
 |--------------|----------------------------------------------------------|
 
@@ -99,19 +94,20 @@ add a course:
 
 
 
-## Applied Constraints on data and operations:
-    - for courses with prerequisites would display message if prerequisites aren't met.
-    - there are two kind of prerequisites. 1. course 2. grades
-    - both prerequisites must match.
-    - once grades are assigned, courses don't show up in the student list. as It is completed now.
-    - course code and student ID are unique key constraint. will display error on repetition. 
+### Applied Constraints on data and operations:
+
+- For courses with prerequisites would display message if prerequisites aren't met.
+- there are two kind of prerequisites. 1. course 2. grades
+- both prerequisites must match.
+- once grades are assigned, courses don't show up in the student list. as It is completed now.
+- course code and student ID are unique key constraint. will display error on repetition. 
 
 
 
 Screenshots:
+![cliOne](https://github.com/Siddharthbadal/Course-Registrar/assets/55015090/352ec659-f77c-449c-9660-7ce4091d0a1d)
 
-![img](https://github.com/Siddharthbadal/Course-Registrar/blob/main/images/commands.png)
+![cliTwo](https://github.com/Siddharthbadal/Course-Registrar/assets/55015090/a4e49e1d-f050-4d5e-bdd8-7a386f8af91e)
 
-![img](https://github.com/Siddharthbadal/Course-Registrar/blob/main/images/first.png)
+![commands](https://github.com/Siddharthbadal/Course-Registrar/assets/55015090/374d2c86-a792-495e-b03a-3d7322f7306e)
 
-![img](https://github.com/Siddharthbadal/Course-Registrar/blob/main/images/second.png)
